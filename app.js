@@ -1,5 +1,5 @@
 const Nightmare = require('nightmare')
-const nightmare = Nightmare({ show: true })
+const nightmare = Nightmare({ show: false })
 
 nightmare
     .useragent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36")
@@ -45,14 +45,13 @@ nightmare
     })
     .end()
     .then(function(result) {
-        //console.log(result[0]);
-        for (let i = 0; i < result.length; i++) {
-
-
+        console.log('Checking links...');
+        for (let i = 0; i < 2; i++) {
+            console.log(' Checking ' + result[i].link);
             var imdb = new Nightmare()
                 .useragent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36")
                 .goto(result[i].link)
-                .wait()
+                .wait('#title-overview-widget')
                 .evaluate(function() {
                     let newarray = [];
 
@@ -64,13 +63,11 @@ nightmare
                 })
                 .end()
                 .then(function(result) {
-                    console.log(result);
+                    console.log('  ' + result);
                 })
-                // .run(function(err, nightmare) {
-                //     if (err) return console.log(err);
-                //     console.log('Done!');
-                // })
-            ;
+                .catch(error => {
+                    console.error('IMDB search failed:', error)
+                });
         }
     })
     .catch(error => {
